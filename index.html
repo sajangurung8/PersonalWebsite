@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sajan Gurung — Under Construction</title>
+    <link
+      rel="stylesheet"
+      href="https://sajangurung8.github.io/PersonalStaticWebsite/style.cssstyles.css"
+    />
+  </head>
+  <body>
+    <canvas id="stars"></canvas>
+    <div class="glow" id="glow"></div>
+
+    <div class="container">
+      <img
+        src="https://sajangurung8.github.io/PersonalStaticWebsite/sglogo.png"
+        alt="Sajan Gurung Logo"
+        class="logo"
+        id="logo"
+      />
+      <p>Website under construction. Stay tuned.</p>
+      <div class="badge" id="launchBtn">
+        Launching Soon <span class="rocket">🚀</span>
+      </div>
+    </div>
+
+    <script>
+      const glow = document.getElementById("glow");
+      document.addEventListener("mousemove", (e) => {
+        glow.style.left = e.clientX + "px";
+        glow.style.top = e.clientY + "px";
+      });
+
+      const logo = document.getElementById("logo");
+      logo.addEventListener("click", () => {
+        logo.classList.remove("spin");
+        void logo.offsetWidth;
+        logo.classList.add("spin");
+      });
+
+      const canvas = document.getElementById("stars");
+      const ctx = canvas.getContext("2d");
+
+      let stars = [];
+      let warp = false;
+      let speed = 0;
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        initStars();
+      }
+
+      function initStars() {
+        stars = [];
+        const count = window.innerWidth < 600 ? 120 : 260;
+        for (let i = 0; i < count; i++) {
+          stars.push({
+            x: Math.random() * canvas.width - canvas.width / 2,
+            y: Math.random() * canvas.height - canvas.height / 2,
+            z: Math.random() * canvas.width,
+          });
+        }
+      }
+
+      function animateStars() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+
+        for (let s of stars) {
+          s.z -= speed;
+          if (s.z <= 0) s.z = canvas.width;
+
+          const k = 128 / s.z;
+          const px = s.x * k;
+          const py = s.y * k;
+
+          if (px > -canvas.width && px < canvas.width) {
+            ctx.fillStyle = "white";
+            ctx.fillRect(px, py, 2, 2);
+          }
+        }
+
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        requestAnimationFrame(animateStars);
+      }
+
+      const launchBtn = document.getElementById("launchBtn");
+      const sound = document.getElementById("launchSound");
+
+      launchBtn.addEventListener("click", () => {
+        sound.currentTime = 0;
+        sound.play();
+
+        warp = true;
+        let accel = setInterval(() => {
+          if (speed < 25) speed += 1;
+        }, 30);
+
+        setTimeout(() => {
+          clearInterval(accel);
+          let decel = setInterval(() => {
+            speed -= 1;
+            if (speed <= 0) {
+              speed = 0;
+              clearInterval(decel);
+            }
+          }, 40);
+        }, 2000);
+      });
+
+      resize();
+      window.addEventListener("resize", resize);
+      animateStars();
+    </script>
+  </body>
+</html>
