@@ -88,12 +88,8 @@
       }
 
       const launchBtn = document.getElementById("launchBtn");
-      const sound = document.getElementById("launchSound");
 
       launchBtn.addEventListener("click", () => {
-        sound.currentTime = 0;
-        sound.play();
-
         warp = true;
         let accel = setInterval(() => {
           if (speed < 25) speed += 1;
